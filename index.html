@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Action Therapy</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/opentip/2.4.6/downloads/opentip-jquery.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-50">
+  <!-- Navigation bar -->
+  <nav class="bg-gray-900 shadow-lg">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="/" class="flex items-center text-white font-bold text-lg">
+        Action Therapy
+      </a>
+    </div>
+  </nav>
+
+  <div class="container mx-auto py-8 px-4">
+    <form id="input-form" class="max-w-md mx-auto mb-8">
+      <div class="flex flex-wrap -mx-2 mb-6">
+        <div class="w-full px-2 mb-6">
+          <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="input1">
+            What's on your mind?
+          </label>
+          <input class="appearance-none block w-full bg-white text-gray-700 border border-gray-400 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="input1" type="text" name="pw">
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <button id="submit-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+    <div id="output" class="max-w-md text-gray-699 mx-auto"></div>
+  </div>
+
+  <script>
+const form = document.getElementById('input-form');
+const input1 = document.getElementById('input1');
+const output = document.getElementById('output');
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer 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'
+    },
+    body: JSON.stringify({
+      prompt: "I want you to act as a psychotherapist. You will provide me with advice on how to deal with stress, anxiety, depression and other mental health issues and life problems. My first suggestion request is:" + input1.value,
+      temperature: 0.9,
+      max_tokens: 950,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0.6,
+      stop: [" Human:", " Therapist:"]
+    })
+  };
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', requestOptions);
+    const data = await response.json();
+    const text = data.choices[0].text;
+    const decoratedText = `<b class="block uppercase tracking-wide text-gray-700 text-lg font-bold mb-2" >Therapist</b><p class="text-black text-xs">${text}</p>`;
+    output.innerHTML = decoratedText;
+  } catch (error) {
+    console.log('There was a problem with the request.', error);
+  }
+});
+  </script>
+</body>
+
+</html>
